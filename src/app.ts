@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { StudentRoutes } from "./app/modules/student/student.route";
 
 const app = express()
 
@@ -8,7 +9,8 @@ const app = express()
 app.use(express.json())  //json parse will happen
 app.use(cors())
 
-
+//application routes
+app.use('/api/v1/students', StudentRoutes)
 
 
 
