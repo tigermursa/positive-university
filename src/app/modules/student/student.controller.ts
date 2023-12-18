@@ -23,7 +23,6 @@ const creteStudent = async (req: Request, res: Response) => {
 
 
 const getAllStudents = async (req: Request, res: Response) => {
-
     try {
         const result = await StudentServices.getAllStudentFromDB()
         //sending response 
@@ -35,11 +34,27 @@ const getAllStudents = async (req: Request, res: Response) => {
     } catch (error) {
         console.log(error)
     }
+};
 
+
+const getSingleStudent = async (req: Request, res: Response) => {
+    try {
+        const studentId = req.params.studentId;
+        const result = await StudentServices.getSingleStudentFromDB(studentId);
+        //sending response 
+        res.status(200).json({
+            success: true,
+            message: "Single Student Getting ",
+            data: result,
+        })
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 
 export const StudentController = {
     creteStudent,
     getAllStudents,
+    getSingleStudent,
 }
