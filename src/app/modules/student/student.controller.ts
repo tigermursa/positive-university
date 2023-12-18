@@ -1,6 +1,7 @@
 import { Student } from './student.interface';
 import { Request, Response } from "express";
 import { StudentServices } from "./student.services";
+import studentValidationZodSchema from './student.validation';
 
 
 const creteStudent = async (req: Request, res: Response) => {
@@ -8,15 +9,20 @@ const creteStudent = async (req: Request, res: Response) => {
         //data will come
         const student = req.body.student;
         //will call services 
-        const result = await StudentServices.createStudentIntoDB(student);
+        const zodErrorData = studentValidationZodSchema.parse(student);
+        const result = await StudentServices.createStudentIntoDB(zodErrorData);
         //sending response 
         res.status(200).json({
             success: true,
-            message: "Student created !",
+            message: "Student created successfully !",
             data: result,
         })
-    } catch (error) {
-        console.log(error)
+    } catch (err) {
+        res.status(200).json({
+            success: true,
+            message: "something went wrong into the input data !",
+            error: err,
+        })
     }
 };
 
