@@ -17,10 +17,10 @@ const creteStudent = async (req: Request, res: Response) => {
             message: "Student created successfully !",
             data: result,
         })
-    } catch (err) {
+    } catch (err: any) {
         res.status(200).json({
             success: true,
-            message: "something went wrong into the input data !",
+            message: err.message || "something went wrong into the input data !",
             error: err,
         })
     }
