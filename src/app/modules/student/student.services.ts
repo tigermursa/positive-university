@@ -4,14 +4,20 @@ import StudentModel from "./student.model";
 
 //post
 const createStudentIntoDB = async (studentData: Student) => {
-    //const result = await StudentModel.create(student) //builtin static method
-    const student = new StudentModel(studentData);//instance
-    if (await student.isUserExist(studentData.id)) {
+    if (await StudentModel.isUserExists(studentData.id)) {
         throw new Error("Sorry this Id user already exist");
     }
-    const result = await student.save();
+    const result = await StudentModel.create(studentData) //builtin static method
     return result;
 }
+
+//OLD CODE FOT INSTANCE
+// const student = new StudentModel(studentData);//instance
+// if (await student.isUserExist(studentData.id)) {
+//     throw new Error("Sorry this Id user already exist");
+// }
+// const result = await student.save()
+
 
 // getAll
 const getAllStudentFromDB = async () => {

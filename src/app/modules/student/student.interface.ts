@@ -1,9 +1,10 @@
+
 import { Model } from "mongoose";
 
-
-
-
-
+// //NEW STATIC METHOD..
+export interface StudentModelWithStatic extends Model<Student> {
+    isUserExists(id: string): Promise<Student | null>;
+}
 export type Guardian = {
     fatherName: string;
     fatherOccupation: string;
@@ -30,6 +31,7 @@ export type LocalGuardian = {
 export type Student = {
     id: string,
     name: UserName,
+    password: string,
     gender: "male" | "female";
     dateOfBirth: string;
     email: string;
@@ -45,9 +47,12 @@ export type Student = {
     isActive: "active" | "blocked";
 }
 
-export type StudentMethods = {
-    isUserExist(id: string): Promise<Student | null>;
-}
 
-export type StudentModelN = Model<Student, Record<string, never>,
-    StudentMethods>;
+
+//FOR INSTANCE
+// export type StudentMethods = {
+//     isUserExist(id: string): Promise<Student | null>;
+// }
+
+// export type StudentModelN = Model<Student, Record<string, never>,
+//     StudentMethods>;

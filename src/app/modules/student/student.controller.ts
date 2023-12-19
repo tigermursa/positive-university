@@ -4,7 +4,7 @@ import { StudentServices } from "./student.services";
 import studentValidationZodSchema from './student.validation';
 
 
-const creteStudent = async (req: Request, res: Response) => {
+const createStudent = async (req: Request, res: Response) => {
     try {
         //data will come
         const student = req.body.student;
@@ -19,9 +19,9 @@ const creteStudent = async (req: Request, res: Response) => {
         })
     } catch (err: any) {
         res.status(200).json({
-            success: true,
+            success: false,
             message: err.message || "something went wrong into the input data !",
-            error: err,
+            error: err.message,
         })
     }
 };
@@ -60,7 +60,7 @@ const getSingleStudent = async (req: Request, res: Response) => {
 
 
 export const StudentController = {
-    creteStudent,
+    createStudent,
     getAllStudents,
     getSingleStudent,
 }
