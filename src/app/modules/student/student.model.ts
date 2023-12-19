@@ -41,8 +41,25 @@ const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentMod
     guardian: guardianSchema,
     localGuardian: localGuardianSchema,
     profileImg: { type: String },
-    isActive: { type: String, enum: ['active', 'blocked'], required: true, default: 'active' }
+    isActive: { type: String, enum: ['active', 'blocked'], required: true, default: 'active' },
+    isDeleted: { type: Boolean, default: false }
+},
+    {
+        toJSON: {
+            virtuals: true,
+        },
+    },
+);
+
+
+// // virtual
+studentSchema.virtual('fullName').get(function () {
+    return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
+
 });
+
+
+
 
 //pre saving middleware
 studentSchema.pre('save', async function (next) {
@@ -51,6 +68,33 @@ studentSchema.pre('save', async function (next) {
         Number(config.bcrypt_salt));
     next();
 })
+
+//post saving middleware/ will sent empty password field for security
+studentSchema.post('save', async function (doc, next) {
+    doc.password = " ";
+    next();
+})
+
+
+
+
+//Query middle wears
+studentSchema.pre('find', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+studentSchema.pre('findOne', function (next) {
+    this.find({ isDeleted: { $ne: true } });
+    next();
+});
+// the single value wont be available by aggregate by..aggregate works on pipeline
+studentSchema.pre('aggregate', function (next) {
+    this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } }); // if not equal = true , don't come
+    next();
+});
+
+
+
 
 
 
