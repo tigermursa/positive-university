@@ -86,9 +86,31 @@ const deleteStudent = async (req: Request, res: Response) => {
 }
 
 
+//update 
+const updateStudent = async (req: Request, res: Response) => {
+    try {
+        const { studentId } = req.params
+        const updatedData = req.body.student;
+        const result = await StudentServices.updateStudentFromDB(studentId, updatedData);
+        res.status(200).json({
+            success: true,
+            message: "single User is Updated successfully",
+            data: result,
+        })
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message,
+        });
+    }
+}
+
+
 export const StudentController = {
     createStudent,
     getAllStudents,
     getSingleStudent,
     deleteStudent,
+    updateStudent,
 }

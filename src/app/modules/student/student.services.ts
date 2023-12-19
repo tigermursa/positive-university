@@ -37,10 +37,20 @@ const deleteStudentFromDB = async (id: string) => {
     return result;
 }
 
+//update 
+const updateStudentFromDB = async (id: string, updatedData: Partial<Student>) => {
+    try {
+        const result = await StudentModel.updateOne({ id }, { $set: updatedData });
+        return result;
+    } catch (error: any) {
+        throw new Error("Error updating student: " + error.message);
+    }
+};
 
 export const StudentServices = {
     createStudentIntoDB,
     getAllStudentFromDB,
     getSingleStudentFromDB,
     deleteStudentFromDB,
+    updateStudentFromDB,
 }
