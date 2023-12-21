@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { StudentServices } from "./student.services";
 import studentValidationZodSchema from './student.validation';
 
-
+/*
 const createStudent = async (req: Request, res: Response) => {
     try {
         //data will come
@@ -25,7 +25,7 @@ const createStudent = async (req: Request, res: Response) => {
         })
     }
 };
-
+*/
 
 
 const getAllStudents = async (req: Request, res: Response) => {
@@ -108,7 +108,7 @@ const updateStudent = async (req: Request, res: Response) => {
 
 
 export const StudentController = {
-    createStudent,
+   // createStudent,
     getAllStudents,
     getSingleStudent,
     deleteStudent,

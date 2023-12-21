@@ -1,5 +1,5 @@
 
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 
 // //NEW STATIC METHOD..
 export interface StudentModelWithStatic extends Model<Student> {
@@ -31,6 +31,7 @@ export type LocalGuardian = {
 export type Student = {
     id: string,
     name: UserName,
+    user: Types.ObjectId; // ref
     password: string,
     gender: "male" | "female";
     dateOfBirth: string;
@@ -44,7 +45,7 @@ export type Student = {
     guardian: Guardian;
     localGuardian: LocalGuardian;
     profileImg?: string;
-    isActive: "active" | "blocked";
+    //isActive: "active" | "blocked";
     isDeleted: boolean;
 }
 

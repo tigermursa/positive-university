@@ -1,7 +1,7 @@
 import { Student } from "./student.interface";
 import StudentModel from "./student.model";
 
-
+/*
 //post
 const createStudentIntoDB = async (studentData: Student) => {
     if (await StudentModel.isUserExists(studentData.id)) {
@@ -10,6 +10,8 @@ const createStudentIntoDB = async (studentData: Student) => {
     const result = await StudentModel.create(studentData) //builtin static method
     return result;
 }
+
+*/
 
 //OLD CODE FOT INSTANCE
 // const student = new StudentModel(studentData);//instance
@@ -48,7 +50,7 @@ const updateStudentFromDB = async (id: string, updatedData: Partial<Student>) =>
 };
 
 export const StudentServices = {
-    createStudentIntoDB,
+    //createStudentIntoDB,
     getAllStudentFromDB,
     getSingleStudentFromDB,
     deleteStudentFromDB,

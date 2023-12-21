@@ -28,6 +28,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentModelN coming from interface
     id: { type: String, required: true, unique: true },
     name: userNameSchema,
+    user: { type: Schema.Types.ObjectId, required: [true, "user ID required"], unique: true, ref: "User" }, //very important
     password: { type: String, required: true },
     gender: { type: String, enum: ['male', 'female'], required: true },
     dateOfBirth: { type: String, required: true },
@@ -41,7 +42,7 @@ const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentMod
     guardian: guardianSchema,
     localGuardian: localGuardianSchema,
     profileImg: { type: String },
-    isActive: { type: String, enum: ['active', 'blocked'], required: true, default: 'active' },
+    //isActive: { type: String, enum: ['active', 'blocked'], required: true, default: 'active' }, no need now!
     isDeleted: { type: Boolean, default: false }
 },
     {
