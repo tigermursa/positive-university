@@ -1,5 +1,7 @@
+import bcrypt from "bcrypt";
 import { Schema, model } from "mongoose";
 import { TUser, UserModelWithStatic } from "./user.interface";
+import config from "../../config";
 
 const userSchema = new Schema<TUser, UserModelWithStatic>({
     id: {
@@ -30,6 +32,21 @@ const userSchema = new Schema<TUser, UserModelWithStatic>({
         default: false,
     },
 });
+
+
+//pre saving middleware
+userSchema.pre('save', async function (next) {
+    const user = this;
+    user.password = await bcrypt.hash(user.password,
+        Number(config.bcrypt_salt));
+    next();
+})
+
+//post saving middleware/ will sent empty password field for security
+userSchema.post('save', async function (doc, next) {
+    doc.password = " ";
+    next();
+})
 
 
 // NEW STATIC METHOD

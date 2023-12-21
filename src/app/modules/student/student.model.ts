@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import { Guardian, LocalGuardian, Student, StudentModelWithStatic, UserName } from "./student.interface";
-import bcrypt from "bcrypt";
+//import bcrypt from "bcrypt";
 import config from "../../config";
 
 const userNameSchema = new Schema<UserName>({
@@ -26,10 +26,10 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 });
 
 const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentModelN coming from interface
-    id: { type: String, required: true, unique: true },
+    id: { type: String, required: true},
     name: userNameSchema,
     user: { type: Schema.Types.ObjectId, required: [true, "user ID required"], unique: true, ref: "User" }, //very important
-    password: { type: String, required: true },
+    //password: { type: String, required: true },
     gender: { type: String, enum: ['male', 'female'], required: true },
     dateOfBirth: { type: String, required: true },
     email: { type: String, required: true },
@@ -62,19 +62,19 @@ studentSchema.virtual('fullName').get(function () {
 
 
 
-//pre saving middleware
-studentSchema.pre('save', async function (next) {
-    const user = this;
-    user.password = await bcrypt.hash(user.password,
-        Number(config.bcrypt_salt));
-    next();
-})
+// //pre saving middleware
+// studentSchema.pre('save', async function (next) {
+//     const user = this;
+//     user.password = await bcrypt.hash(user.password,
+//         Number(config.bcrypt_salt));
+//     next();
+// })
 
-//post saving middleware/ will sent empty password field for security
-studentSchema.post('save', async function (doc, next) {
-    doc.password = " ";
-    next();
-})
+// //post saving middleware/ will sent empty password field for security
+// studentSchema.post('save', async function (doc, next) {
+//     doc.password = " ";
+//     next();
+// })
 
 
 

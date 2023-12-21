@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const userZodValidationSchema = z.object({
-    id: z.string().max(15),
+    //id: z.string().max(15),
     password: z.string({
         invalid_type_error: "Password must be string"
     }).max(20).min(5).optional(),

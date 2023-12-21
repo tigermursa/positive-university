@@ -32,7 +32,7 @@ export type Student = {
     id: string,
     name: UserName,
     user: Types.ObjectId; // ref
-    password: string,
+    //password: string,
     gender: "male" | "female";
     dateOfBirth: string;
     email: string;
