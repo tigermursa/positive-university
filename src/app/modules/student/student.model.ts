@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { Guardian, LocalGuardian, Student, StudentModelWithStatic, UserName } from "./student.interface";
 //import bcrypt from "bcrypt";
 import config from "../../config";
+import { string } from "zod";
 
 const userNameSchema = new Schema<UserName>({
     firstName: { type: String, required: true },
@@ -26,7 +27,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 });
 
 const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentModelN coming from interface
-    id: { type: String, required: true},
+    id: { type: String, required: true, unique: true },
     name: userNameSchema,
     user: { type: Schema.Types.ObjectId, required: [true, "user ID required"], unique: true, ref: "User" }, //very important
     //password: { type: String, required: true },
@@ -42,6 +43,10 @@ const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentMod
     guardian: guardianSchema,
     localGuardian: localGuardianSchema,
     profileImg: { type: String },
+    admissionSemester: {
+        type: Schema.Types.ObjectId,
+        ref: "AcademicSemester"
+    },
     //isActive: { type: String, enum: ['active', 'blocked'], required: true, default: 'active' }, no need now!
     isDeleted: { type: Boolean, default: false }
 },

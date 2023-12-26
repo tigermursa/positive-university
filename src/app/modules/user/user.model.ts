@@ -7,6 +7,7 @@ const userSchema = new Schema<TUser, UserModelWithStatic>({
     id: {
         type: String,
         required: true,
+        unique: true,
     },
     password: {
         type: String,
