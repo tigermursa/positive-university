@@ -33,7 +33,11 @@ const studentSchema = new Schema<Student, StudentModelWithStatic>({ //StudentMod
     //password: { type: String, required: true },
     gender: { type: String, enum: ['male', 'female'], required: true },
     dateOfBirth: { type: String, required: true },
-    email: { type: String, required: true },
+    email: {
+        type: String,
+        required: [true, 'Email is required'],
+        unique: true,
+    },
     avatar: { type: String },
     contactNo: { type: String, required: true },
     emergencyContactNo: { type: String, required: true },

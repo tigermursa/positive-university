@@ -29,7 +29,7 @@ const getAllStudentFromDB = async () => {
 
 // getSingle
 const getSingleStudentFromDB = async (id: string) => {
-    const result = await StudentModel.findOne({ id: id });
+    const result = await StudentModel.findById({ id: id });
     return result;
 }
 
