@@ -6,6 +6,9 @@ import { TUser } from "./user.interface";
 import { User } from "./user.model";
 import StudentModel from "../student/student.model";
 import config from "../../config";
+import mongoose from "mongoose";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 //post
 const createUserIntoDB = async (password: string, payload: Student) => {
@@ -26,21 +29,45 @@ const createUserIntoDB = async (password: string, payload: Student) => {
     if (!admissionSemester) {
         throw new Error("Admission semester not found");
     }
+    //1st
+    const session = await mongoose.startSession();
 
-    // set generated id
-    userData.id = await generateStudentId(admissionSemester);
+    try {
+        //2nd
+        session.startTransaction();
+        // set generated id
+        userData.id = await generateStudentId(admissionSemester);
 
-    // create a user
-    const newUser = await User.create(userData);
+        // create a user (transaction-1)
+        const newUser = await User.create([userData], { session });
 
-    // create a student
-    if (Object.keys(newUser).length) {
+        // create a student
+        if (!newUser.length) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user')
+        }
         // set id , _id as user
-        payload.id = newUser.id; // this is embedding id
-        payload.user = newUser._id; // this is reference _id
-        const newStudent = await StudentModel.create(payload);
+        payload.id = newUser[0].id; // this is embedding id
+        payload.user = newUser[0]._id; // this is reference _id
+
+        //(transaction-2)
+        const newStudent = await StudentModel.create([payload], { session });
+
+        if (!newStudent.length) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student')
+        }
+        //3rd
+        await session.commitTransaction();
+        //4th
+        await session.endSession();
         return newStudent;
     }
+    catch (error) {
+        //5th
+        await session.abortTransaction();
+        //6th
+        await session.endSession();
+    }
+
 };
 
 export const UserServices = {
