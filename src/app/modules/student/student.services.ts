@@ -1,5 +1,9 @@
+import mongoose from "mongoose";
 import { Student } from "./student.interface";
 import StudentModel from "./student.model";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
+import { User } from "../user/user.model";
 
 /*
 //post
@@ -29,24 +33,87 @@ const getAllStudentFromDB = async () => {
 
 // getSingle
 const getSingleStudentFromDB = async (id: string) => {
-    const result = await StudentModel.findById({ id: id });
+    const result = await StudentModel.findOne({ id: id }); //out id that is why no find BY ID
     return result;
 }
 
 // delete
 const deleteStudentFromDB = async (id: string) => {
-    const result = await StudentModel.updateOne({ id: id }, { isDeleted: true });
-    return result;
-}
+    //1st
+    const session = await mongoose.startSession();
+
+    try {
+        //2nd
+        session.startTransaction();
+
+        const deletedStudent = await StudentModel.findByIdAndUpdate(
+            id,
+            { isDeleted: true },
+            { new: true, session },
+        );
+
+        if (!deletedStudent) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
+        }
+
+        // get user _id from deletedStudent
+        const userId = deletedStudent.user;
+
+        const deletedUser = await User.findByIdAndUpdate(   //findByIdAndUpdate because using out id 
+            userId,
+            { isDeleted: true },
+            { new: true, session },
+        );
+
+        if (!deletedUser) {
+            throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete user');
+        }
+        //3rd success
+        await session.commitTransaction();
+        //4th
+        await session.endSession();
+
+        return deletedStudent;
+    } catch (err) {
+        //5th
+        await session.abortTransaction();
+        //6th
+        await session.endSession();
+        throw new Error('Failed to delete student');
+    }
+};
 
 //update 
-const updateStudentFromDB = async (id: string, updatedData: Partial<Student>) => {
-    try {
-        const result = await StudentModel.updateOne({ id }, { $set: updatedData });
-        return result;
-    } catch (error: any) {
-        throw new Error("Error updating student: " + error.message);
+const updateStudentFromDB = async (id: string, payload: Partial<Student>) => {
+    const { name, guardian, localGuardian, ...remainingStudentData } = payload;
+
+    const modifiedUpdatedData: Record<string, unknown> = {
+        ...remainingStudentData,
+    };
+
+    if (name && Object.keys(name).length) {
+        for (const [key, value] of Object.entries(name)) {
+            modifiedUpdatedData[`name.${key}`] = value;
+        }
     }
+
+    if (guardian && Object.keys(guardian).length) {
+        for (const [key, value] of Object.entries(guardian)) {
+            modifiedUpdatedData[`guardian.${key}`] = value;
+        }
+    }
+
+    if (localGuardian && Object.keys(localGuardian).length) {
+        for (const [key, value] of Object.entries(localGuardian)) {
+            modifiedUpdatedData[`localGuardian.${key}`] = value;
+        }
+    }
+
+    const result = await StudentModel.findByIdAndUpdate(id, modifiedUpdatedData, {
+        new: true,
+        runValidators: true,
+    });
+    return result;
 };
 
 export const StudentServices = {
@@ -56,3 +123,5 @@ export const StudentServices = {
     deleteStudentFromDB,
     updateStudentFromDB,
 }
+
+//if there is no user and trying to delete that user handel this error!

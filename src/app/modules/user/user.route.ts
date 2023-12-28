@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.post(
     "/create-student",
-    validateRequest(studentValidations.createStudentValidationZodSchema), // Use the specific schema
+    validateRequest(studentValidations.createStudentValidationSchema), // Use the specific schema
     UserController.createStudent
 );
 
